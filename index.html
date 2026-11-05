@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fiche de révision — Bases de données NoSQL & MongoDB</title>
+<style>
+:root{
+  --bg:#0f172a; --panel:#111827; --panel2:#172033; --text:#e5e7eb;
+  --muted:#a7b0c0; --accent:#60a5fa; --accent2:#34d399; --warn:#fbbf24;
+  --danger:#fb7185; --border:#293548; --code:#0b1220;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:linear-gradient(180deg,#0b1020 0%,#111827 35%,#0b1020 100%);
+font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--text);line-height:1.65}
+.container{max-width:1200px;margin:auto;padding:28px 22px 80px}
+.hero{padding:38px 34px;border:1px solid var(--border);border-radius:24px;background:linear-gradient(135deg,#172033,#0f172a);
+box-shadow:0 20px 70px rgba(0,0,0,.25)}
+h1{font-size:clamp(30px,5vw,52px);line-height:1.05;margin:0 0 12px}
+h2{font-size:30px;margin-top:55px;color:#fff;border-bottom:1px solid var(--border);padding-bottom:10px}
+h3{font-size:21px;color:#dbeafe;margin-top:28px}
+h4{font-size:17px;color:#bfdbfe;margin-bottom:8px}
+p,li{font-size:15.5px}
+.muted{color:var(--muted)}
+.badge{display:inline-block;padding:5px 10px;border-radius:999px;background:#1e293b;border:1px solid var(--border);font-size:12px;margin:4px 4px 0 0}
+.toc{position:sticky;top:10px;z-index:5;margin:20px 0;padding:16px;border:1px solid var(--border);border-radius:18px;background:rgba(15,23,42,.92);backdrop-filter:blur(10px)}
+.toc a{color:#bfdbfe;text-decoration:none;margin-right:15px;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.card{background:rgba(17,24,39,.9);border:1px solid var(--border);border-radius:18px;padding:20px;margin:15px 0}
+.card strong{color:#fff}
+.key{border-left:4px solid var(--accent);padding:13px 16px;background:#0f1b31;border-radius:0 12px 12px 0;margin:16px 0}
+.warn{border-left-color:var(--warn);background:#241d0d}
+.good{border-left-color:var(--accent2);background:#0b211b}
+.danger{border-left-color:var(--danger);background:#260f18}
+table{width:100%;border-collapse:collapse;margin:16px 0;background:#111827;border-radius:12px;overflow:hidden}
+th,td{border:1px solid var(--border);padding:11px;text-align:left;vertical-align:top}
+th{background:#1e293b;color:#dbeafe}
+code,pre{font-family:Consolas,Monaco,monospace}
+code{background:#1e293b;padding:2px 5px;border-radius:5px}
+pre{background:var(--code);border:1px solid var(--border);border-radius:12px;padding:16px;overflow:auto;color:#d1fae5;font-size:13px}
+details{background:#111827;border:1px solid var(--border);border-radius:14px;padding:12px 16px;margin:12px 0}
+summary{cursor:pointer;font-weight:700;color:#dbeafe}
+ul{padding-left:24px}
+.term{color:#93c5fd;font-weight:700}
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:16px 0}
+.flow span{background:#1e293b;border:1px solid var(--border);padding:9px 12px;border-radius:10px}
+.arrow{color:#60a5fa;font-weight:900}
+.progress{height:10px;background:#1e293b;border-radius:99px;overflow:hidden;margin:12px 0 25px}
+.progress div{width:67%;height:100%;background:linear-gradient(90deg,#60a5fa,#34d399)}
+.search{width:100%;padding:13px 15px;border-radius:12px;border:1px solid var(--border);background:#0b1220;color:white;margin:8px 0 15px}
+.small{font-size:13px;color:var(--muted)}
+footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--border);color:var(--muted)}
+@media print{
+ body{background:white;color:#111}
+ .hero,.card,details{break-inside:avoid;background:white;border:1px solid #bbb}
+ .toc{display:none}
+ h2{color:#111}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<section class="hero">
+  <div class="badge">DS — Périmètre : diapositives 1 → 69</div>
+  <div class="badge">Cours : Bases de données NoSQL — étude de cas MongoDB</div>
+  <h1>Fiche de révision ultra-détaillée</h1>
+  <p class="muted">Cette fiche suit le contenu du support fourni et s'arrête volontairement au <strong>sharding de MongoDB, diapositive 69</strong>. Les parties qui commencent après cette diapositive ne sont pas incluses.</p>
+  <div class="progress"><div></div></div>
+  <p><strong>Objectif :</strong> comprendre les notions, savoir les expliquer avec des mots simples, reconnaître les mécanismes dans un exercice et mémoriser les commandes MongoDB essentielles.</p>
+</section>
+
+<nav class="toc">
+  <input id="search" class="search" placeholder="🔎 Rechercher dans la fiche…">
+  <a href="#bigdata">1. Big Data & NoSQL</a>
+  <a href="#relational">2. Relationnel & distribution</a>
+  <a href="#document">3. Modèle document</a>
+  <a href="#mongo">4. MongoDB</a>
+  <a href="#queries">5. Requêtes</a>
+  <a href="#aggregation">6. Aggregation</a>
+  <a href="#acidmongo">7. ACID MongoDB</a>
+  <a href="#replication">8. Réplication</a>
+  <a href="#cap">9. CAP & failover</a>
+  <a href="#sharding">10. Sharding</a>
+  <a href="#mongo-shard">11. Sharding MongoDB</a>
+  <a href="#exam">12. Révision DS</a>
+</nav>
+
+<section id="bigdata">
+<h2>1 — Big Data, NoSQL et pourquoi le modèle classique pose problème</h2>
+
+<div class="card">
+<h3>Big Data : définition du cours</h3>
+<p>Le <span class="term">Big Data</span> concerne la gestion et l'analyse de données massives. Le point important du support est que les besoins de stockage et/ou de traitement peuvent dépasser très largement les capacités d'une seule machine.</p>
+<div class="key good"><strong>Conséquence :</strong> on utilise des plateformes distribuées capables de stocker et traiter les données sur plusieurs serveurs : Hadoop, Spark, TensorFlow, MongoDB, Kafka, etc.</div>
+</div>
+
+<h3>NoSQL = « Not Only SQL »</h3>
+<p>Les bases <span class="term">NoSQL</span> sont une famille de bases non relationnelles conçues notamment pour gérer de grandes quantités de données non structurées ou semi-structurées.</p>
+<ul>
+<li>Scalabilité horizontale importante.</li>
+<li>Données pouvant être distribuées sur plusieurs serveurs.</li>
+<li>Modèles de données plus flexibles que le schéma relationnel classique.</li>
+<li>Objectif général : faciliter la gestion de données massives et distribuées.</li>
+</ul>
+
+<table>
+<tr><th>Famille NoSQL</th><th>Principe</th><th>Exemples du cours</th></tr>
+<tr><td>Documents</td><td>Documents JSON/BSON</td><td>MongoDB, CouchDB</td></tr>
+<tr><td>Clé-valeur</td><td>Paires clé → valeur</td><td>Redis, Amazon DynamoDB</td></tr>
+<tr><td>Colonnes</td><td>Données organisées par colonnes</td><td>Cassandra, HBase</td></tr>
+<tr><td>Graphes</td><td>Relations représentées comme un graphe</td><td>Neo4j, ArangoDB</td></tr>
+</table>
+
+<div class="key"><strong>À mémoriser :</strong> MongoDB = NoSQL orienté documents, avec représentation JSON/BSON.</div>
+</section>
+
+<section id="relational">
+<h2>2 — Bases relationnelles, transactions et distribution</h2>
+
+<h3>Transaction</h3>
+<p>Une <span class="term">transaction</span> est une séquence d'opérations de lecture/écriture qui doit être exécutée entièrement ou pas du tout.</p>
+<p>Exemples : virement bancaire, validation d'un panier d'achat.</p>
+<div class="flow">
+<span>BEGIN / startTransaction()</span><span class="arrow">→</span>
+<span>opérations</span><span class="arrow">→</span>
+<span>COMMIT</span>
+</div>
+<p>En cas d'échec : <code>ROLLBACK</code> / annulation.</p>
+
+<h3>ACID</h3>
+<table>
+<tr><th>Lettre</th><th>Signification</th><th>Idée à retenir</th></tr>
+<tr><td><strong>A</strong> — Atomicité</td><td>Tout ou rien</td><td>Une transaction réalise toutes ses actions ou aucune.</td></tr>
+<tr><td><strong>C</strong> — Cohérence</td><td>Intégrité</td><td>Les règles d'intégrité doivent être respectées.</td></tr>
+<tr><td><strong>I</strong> — Isolation</td><td>Pas d'interférence</td><td>Les modifications d'une transaction ne sont pas visibles aux autres avant validation.</td></tr>
+<tr><td><strong>D</strong> — Durabilité</td><td>Persistance</td><td>Une modification validée doit survivre à une panne.</td></tr>
+</table>
+
+<div class="key warn"><strong>Piège DS :</strong> ne pas confondre cohérence ACID et « cohérence à terme » d'un système distribué. Ce sont deux contextes différents.</div>
+
+<h3>Transaction distribuée</h3>
+<p>Une transaction est distribuée lorsque ses opérations ont lieu sur plusieurs sites/serveurs distants. Exemple du support : virement d'une banque A vers une banque B.</p>
+<p>Le problème essentiel : garantir l'atomicité malgré la distribution. Si une opération échoue, il faut éviter que l'autre soit définitivement validée.</p>
+
+<h3>2 Phase Commit — 2PC</h3>
+<p>Le protocole <span class="term">Two-Phase Commit</span> utilise un <strong>coordinateur</strong> et plusieurs <strong>participants</strong>.</p>
+<div class="card">
+<h4>Phase 1 — Vote</h4>
+<ol>
+<li>Le coordinateur envoie les opérations aux participants.</li>
+<li>Chaque participant exécute ses opérations.</li>
+<li>Chaque participant répond Oui/Non.</li>
+</ol>
+<h4>Phase 2 — Décision</h4>
+<ul>
+<li><strong>Tout le monde répond Oui :</strong> le coordinateur envoie <code>COMMIT</code>.</li>
+<li><strong>Au moins un Non :</strong> le coordinateur envoie <code>ROLLBACK</code>.</li>
+</ul>
+</div>
+<div class="key danger"><strong>Problème à grande échelle :</strong> les pannes fréquentes peuvent provoquer des annulations et une forte lenteur. C'est l'une des motivations derrière les architectures NoSQL distribuées.</div>
+
+<h3>Jointures et scalabilité</h3>
+<p>Dans le relationnel, les informations sont souvent réparties sur plusieurs tables. Pour reconstruire une entité complexe, on utilise des <span class="term">jointures</span>.</p>
+<p>À grande échelle, les jointures et les écritures distribuées peuvent devenir coûteuses. Le modèle documentaire cherche donc à regrouper les données liées dans des documents autonomes afin de minimiser les jointures.</p>
+</section>
+
+<section id="document">
+<h2>3 — Modèle orienté document</h2>
+
+<h3>Modèle agrégé de données</h3>
+<p>Un document peut regrouper les informations qui appartiennent logiquement à une même entité. Exemple du support : un film contenant son réalisateur et une liste d'acteurs.</p>
+
+<pre>{
+  "id": 1,
+  "title": "Dachra",
+  "year": 2018,
+  "genre": "Horror",
+  "director": {
+    "id": 1,
+    "last_name": "Bouchnak",
+    "first_name": "Abdelhamid",
+    "birth_year": 1984
+  },
+  "actors": [
+    {
+      "id": 8,
+      "last_name": "Jebali",
+      "first_name": "Aziz",
+      "birth_year": 1986,
+      "role": "Walid"
+    }
+  ]
+}</pre>
+
+<h3>Pourquoi ce modèle ?</h3>
+<ul>
+<li>Les données liées sont regroupées.</li>
+<li>On évite certaines jointures.</li>
+<li>On réduit certaines écritures distribuées.</li>
+<li>Le modèle est adapté aux données semi-structurées.</li>
+<li>La structure peut être imbriquée.</li>
+</ul>
+
+<h3>Inconvénients du modèle agrégé</h3>
+<ul>
+<li><strong>Redondance :</strong> la même information peut être copiée dans plusieurs documents.</li>
+<li><strong>Risque d'incohérence :</strong> une copie peut être modifiée sans que les autres le soient.</li>
+<li><strong>Mises à jour difficiles :</strong> toutes les copies doivent être maintenues.</li>
+<li><strong>Certains accès deviennent moins efficaces :</strong> certaines recherches complexes peuvent nécessiter plusieurs requêtes.</li>
+<li><strong>Entités indépendantes :</strong> une entité comme un acteur peut être difficile à gérer séparément si elle est encapsulée dans un document film.</li>
+</ul>
+
+<div class="key good"><strong>Avantage central du support :</strong> éviter les jointures et les écritures distribuées.</div>
+
+<h3>Relationnel vs document</h3>
+<table>
+<tr><th>Relationnel</th><th>Orienté document</th></tr>
+<tr><td>Tables, lignes, colonnes</td><td>Documents JSON/BSON</td></tr>
+<tr><td>Schéma fixe</td><td>Structure flexible</td></tr>
+<tr><td>Jointures fréquentes</td><td>Regroupement des données liées</td></tr>
+<tr><td>Très adapté aux relations complexes</td><td>Très adapté aux données semi-structurées et applications modernes</td></tr>
+<tr><td>Distribution plus délicate lorsque les données sont fortement liées</td><td>Autonomie des documents facilitant la distribution</td></tr>
+</table>
+
+<div class="key"><strong>Notion importante : autonomie.</strong> Plus les documents sont autonomes, plus il est facile de les distribuer. Si les données dépendent fortement les unes des autres, les jointures réapparaissent et les avantages du NoSQL diminuent.</div>
+</section>
+
+<section id="mongo">
+<h2>4 — MongoDB : concepts fondamentaux</h2>
+
+<p><span class="term">MongoDB</span> est un système NoSQL orienté documents. Le support le présente comme un système semi-structuré, basé sur une représentation JSON, avec une grande flexibilité de schéma et conçu dès l'origine pour être scalable et distribué.</p>
+
+<h3>Vocabulaire à connaître</h3>
+<table>
+<tr><th>MongoDB</th><th>Relationnel</th></tr>
+<tr><td>Database</td><td>Base de données</td></tr>
+<tr><td>Collection</td><td>Table</td></tr>
+<tr><td>Document</td><td>Ligne / enregistrement</td></tr>
+<tr><td>Champ</td><td>Colonne</td></tr>
+<tr><td><code>_id</code></td><td>Identifiant de l'enregistrement</td></tr>
+</table>
+
+<h3>Installation / lancement</h3>
+<p>Le support indique que le serveur MongoDB écoute classiquement sur le port <code>27017</code>. Le processus serveur est <code>mongod</code> et le shell utilisé dans le support est <code>mongosh</code>.</p>
+
+<pre>mongod
+mongosh</pre>
+
+<p>La base par défaut mentionnée dans le support est <code>test</code>.</p>
+
+<h3>Créer / sélectionner une base et une collection</h3>
+<pre>use maBase
+db.createCollection("movies")
+show collections</pre>
+
+<div class="key"><strong>Important :</strong> une base MongoDB contient des collections ; une collection contient des documents.</div>
+
+<h3>Insertion et lecture</h3>
+<pre>db.movies.insertOne({
+  "produit": "Grulband",
+  "prix": 230,
+  "enStock": true
+})
+
+db.movies.find()</pre>
+
+<p>MongoDB attribue automatiquement un <code>_id</code> si celui-ci n'est pas fourni.</p>
+
+<pre>db.movies.insertOne({
+  "_id": "1",
+  "produit": "Kramolk",
+  "prix": 10,
+  "enStock": true
+})</pre>
+
+<h3>Autres opérations de base</h3>
+<pre>db.movies.count()
+db.movies.drop()</pre>
+
+<p>Le support présente également l'import JSON via <code>mongoimport</code>.</p>
+
+<pre>mongoimport -d dbMovies -c movies --file movies.json --jsonArray</pre>
+
+<div class="key warn"><strong>Absence de schéma :</strong> le support insiste sur le fait que la flexibilité du schéma ne signifie pas « aucune contrainte nécessaire ». Une partie des contrôles de structure et de cohérence est reportée vers l'application.</div>
+</section>
+
+<section id="queries">
+<h2>5 — Requêtes MongoDB</h2>
+
+<h3>Idée générale</h3>
+<p>MongoDB permet d'exprimer l'équivalent de nombreuses recherches <code>SELECT ... FROM ... WHERE ...</code> sur une collection, sans jointure classique dans les requêtes simples.</p>
+
+<h3>Recherche par clé</h3>
+<pre>db.artists.find({
+  _id: "artist:99"
+})</pre>
+
+<h3>Recherche dans un chemin imbriqué</h3>
+<pre>db.movies.find({
+  "director.last_name": "Scott"
+})</pre>
+
+<p>Le même principe peut être utilisé dans un tableau d'objets :</p>
+<pre>db.movies.find({
+  "actors.last_name": "Weaver"
+})</pre>
+
+<h3>findOne, pagination et projection</h3>
+<pre>db.movies.findOne({
+  "actors._id": "artist:99"
+})
+
+db.movies.find({
+  "actors._id": "artist:99"
+}).skip(0).limit(2)
+
+db.movies.find(
+  {"actors._id": "artist:99"},
+  {"title": 1}
+)</pre>
+
+<ul>
+<li><code>findOne()</code> : récupérer un document correspondant.</li>
+<li><code>skip(n)</code> : ignorer les premiers résultats.</li>
+<li><code>limit(n)</code> : limiter le nombre de résultats.</li>
+<li>Projection : choisir les champs retournés.</li>
+</ul>
+
+<h3>Expressions régulières</h3>
+<pre>db.movies.find(
+  {"title": /^Re/},
+  {"title": 1}
+)</pre>
+<p>Ici, le titre doit commencer par <code>Re</code>.</p>
+
+<h3>Recherche par intervalle</h3>
+<pre>db.movies.find({
+  "year": {
+    $gte: 2000,
+    $lte: 2005
+  }
+})</pre>
+
+<p><code>$gte</code> = greater than or equal ; <code>$lte</code> = less than or equal.</p>
+
+<h3>Opérateurs ensemblistes</h3>
+<pre>db.artists.find({
+  _id: {
+    $in: ["artist:34", "artist:98", "artist:1"]
+  }
+})</pre>
+
+<p>Le support cite notamment <code>$in</code>, <code>$nin</code>, <code>$all</code> et <code>$exists</code>.</p>
+
+<pre>db.movies.find({
+  summary: {$exists: true}
+})</pre>
+
+<h3>Opérateurs booléens</h3>
+<p>Quand plusieurs critères sont placés dans une même expression de recherche, le comportement présenté est une conjonction logique par défaut.</p>
+
+<pre>db.movies.find({
+  $and: [
+    {"year": "1997"},
+    {"actors.last_name": "DiCaprio"}
+  ]
+})
+
+db.movies.find({
+  $or: [
+    {"year": "1997"},
+    {"actors.last_name": "DiCaprio"}
+  ]
+})</pre>
+
+<div class="key good"><strong>À savoir expliquer :</strong> les requêtes MongoDB ont une expressivité comparable à SQL pour les recherches à l'intérieur d'une même collection, mais la logique de modélisation est différente. Lorsque les informations sont réparties entre collections, on peut utiliser l'Aggregation Pipeline et notamment <code>$lookup</code>.</div>
+
+<h3>Mise à jour / suppression</h3>
+<pre>db.test.update(
+  {"_id": "movie:2"},
+  {$set: {sous_titre: "Le passager"}}
+)
+
+db.test.update(
+  {"_id": "movie:2"},
+  {$unset: {country: 1}}
+)
+
+db.test.remove()</pre>
+
+<p><code>$set</code> ajoute/modifie un champ ; <code>$unset</code> supprime un champ. La dernière commande illustrée dans le support supprime les documents correspondant à l'opération.</p>
+</section>
+
+<section id="aggregation">
+<h2>6 — Aggregation Pipeline</h2>
+
+<p>L'<span class="term">Aggregation Pipeline</span> est une succession d'étapes/opérateurs permettant d'effectuer des traitements plus complexes que les recherches simples avec <code>find()</code>.</p>
+
+<h3>Principe</h3>
+<div class="flow">
+<span>Collection</span><span class="arrow">→</span>
+<span>$match</span><span class="arrow">→</span>
+<span>$group</span><span class="arrow">→</span>
+<span>$sort</span><span class="arrow">→</span>
+<span>$limit</span><span class="arrow">→</span>
+<span>Résultat</span>
+</div>
+
+<h3>Compter les films d'un genre</h3>
+<pre>db.movies.aggregate([
+  {$match: {genre: "drama"}},
+  {$count: "nombreFilms"}
+])</pre>
+
+<h3>Les 3 réalisateurs ayant dirigé le plus de films</h3>
+<pre>db.movies.aggregate([
+  {$group: {
+    _id: "$director._id",
+    total: {$sum: 1}
+  }},
+  {$sort: {total: -1}},
+  {$limit: 3}
+])</pre>
+
+<h3>Les 3 acteurs ayant joué dans le plus de films</h3>
+<pre>db.movies.aggregate([
+  {$unwind: "$actors"},
+  {$group: {
+    _id: "$actors._id",
+    total: {$sum: 1}
+  }},
+  {$sort: {total: -1}},
+  {$limit: 3}
+])</pre>
+
+<p><strong>$unwind</strong> est particulièrement important : il transforme les éléments d'un tableau en éléments séparés du pipeline, ce qui permet ensuite de les regrouper/comptabiliser.</p>
+
+<h3>$lookup : jointure dans l'Aggregation Pipeline</h3>
+<p>Le support indique que MongoDB possède depuis la version 3.2 l'opérateur de jointure <code>$lookup</code>.</p>
+
+<pre>db.moviesAvecRef.aggregate([
+  {
+    $lookup: {
+      from: "artists",
+      localField: "director._id",
+      foreignField: "_id",
+      as: "realisateur"
+    }
+  },
+  {
+    $project: {
+      "title": 1,
+      "realisateur.last_name": 1
+    }
+  }
+])</pre>
+
+<table>
+<tr><th>Opérateur</th><th>Rôle</th></tr>
+<tr><td><code>$match</code></td><td>Filtrer les documents</td></tr>
+<tr><td><code>$group</code></td><td>Regrouper et calculer des agrégats</td></tr>
+<tr><td><code>$sum</code></td><td>Sommer / compter avec <code>$sum:1</code></td></tr>
+<tr><td><code>$sort</code></td><td>Trier</td></tr>
+<tr><td><code>$limit</code></td><td>Limiter le nombre de résultats</td></tr>
+<tr><td><code>$unwind</code></td><td>Décomposer un tableau</td></tr>
+<tr><td><code>$lookup</code></td><td>Faire une jointure entre collections</td></tr>
+<tr><td><code>$project</code></td><td>Choisir/transformer les champs retournés</td></tr>
+</table>
+</section>
+
+<section id="acidmongo">
+<h2>7 — MongoDB et ACID</h2>
+
+<p>Le support précise que MongoDB introduit le support des <span class="term">transactions ACID</span> à partir de la version 4.0.</p>
+
+<pre>session = db.getMongo().startSession();
+db = session.getDatabase("maBase");
+collection = db.getCollection("maCollection");
+
+session.startTransaction();
+
+try {
+  collection.insertOne({ name: "Document 1" });
+  collection.insertOne({ name: "Document 2" });
+
+  session.commitTransaction();
+}
+catch (error) {
+  session.abortTransaction();
+}
+finally {
+  session.endSession();
+}</pre>
+
+<h3>À retenir</h3>
+<ul>
+<li>Une session est démarrée.</li>
+<li>Une transaction est démarrée avec <code>startTransaction()</code>.</li>
+<li>Les opérations sont exécutées.</li>
+<li>En cas de succès : <code>commitTransaction()</code>.</li>
+<li>En cas d'erreur : <code>abortTransaction()</code>.</li>
+<li>La session est terminée avec <code>endSession()</code>.</li>
+</ul>
+
+<div class="key warn"><strong>Différence avec le relationnel :</strong> dans le support, les transactions MongoDB ne sont pas présentées comme obligatoires pour toute opération, contrairement au modèle relationnel classique.</div>
+</section>
+
+<section id="replication">
+<h2>8 — Réplication : pourquoi et comment ?</h2>
+
+<h3>Pourquoi répliquer ?</h3>
+<ul>
+<li><strong>Tolérance aux pannes :</strong> si un serveur tombe, une copie existe ailleurs.</li>
+<li><strong>Distribution des lectures :</strong> plusieurs serveurs peuvent répondre aux lectures.</li>
+<li><strong>Disponibilité :</strong> le système continue à fonctionner malgré certaines pannes.</li>
+<li>Possibilité d'effectuer certaines opérations sur une copie sans affecter directement les autres.</li>
+</ul>
+
+<div class="key"><strong>Idée simple :</strong> réplication = plusieurs copies des mêmes données.</div>
+
+<h3>Réplication synchrone vs asynchrone</h3>
+<table>
+<tr><th>Synchrone</th><th>Asynchrone</th></tr>
+<tr><td>Le serveur principal attend les confirmations des autres.</td><td>Le serveur principal n'attend pas toutes les copies.</td></tr>
+<tr><td>Plus forte cohérence.</td><td>Plus rapide.</td></tr>
+<tr><td>Plus de latence.</td><td>Risque d'incohérence temporaire.</td></tr>
+<tr><td>Le support : sécurité/cohérence fortes mais lenteur.</td><td>Le support : sécurité partielle, cohérence faible, efficacité.</td></tr>
+</table>
+
+<h3>Journalisation</h3>
+<p>Le support rappelle l'utilisation d'un fichier journal pour éviter certaines latences disque et permettre de ramener les écritures vers des entrées/sorties séquentielles.</p>
+</section>
+
+<section id="cap">
+<h2>9 — Cohérence, failover et théorème CAP</h2>
+
+<h3>Cohérence forte</h3>
+<p>À tout instant, il ne doit pas y avoir deux valeurs/versions différentes d'une même donnée. Une opération validée est permanente et immédiatement visible.</p>
+
+<h3>Cohérence faible</h3>
+<p>On accepte qu'une lecture puisse temporairement ne pas refléter la dernière mise à jour.</p>
+
+<h3>Cohérence à terme — Eventual Consistency</h3>
+<p>Le système accepte des incohérences transitoires mais garantit qu'elles finiront par disparaître : les copies convergent vers un même état.</p>
+
+<div class="key warn"><strong>Logique du cours :</strong> les systèmes NoSQL privilégient souvent la réplication asynchrone et les performances au détriment d'une cohérence forte immédiate.</div>
+
+<h3>Failover</h3>
+<p>Le <span class="term">failover</span> est la reprise du service lorsqu'un serveur tombe en panne.</p>
+<ul>
+<li>Les serveurs échangent des messages de type <strong>heartbeat</strong>.</li>
+<li>Si un secondaire tombe, les autres peuvent continuer.</li>
+<li>Si le maître tombe, les secondaires doivent élire un nouveau maître.</li>
+<li>En cas de partition réseau, la majorité est essentielle pour éviter que plusieurs groupes élisent chacun leur propre maître.</li>
+</ul>
+
+<h3>Théorème CAP</h3>
+<p>Le support présente CAP comme une limitation intrinsèque aux systèmes distribués :</p>
+<table>
+<tr><th>C</th><th>Consistency</th><td>Les lectures voient une donnée cohérente.</td></tr>
+<tr><th>A</th><th>Availability</th><td>Le système continue à répondre.</td></tr>
+<tr><th>P</th><th>Partition tolerance</th><td>Le système tolère une séparation du réseau en groupes.</td></tr>
+</table>
+
+<div class="key danger"><strong>À mémoriser :</strong> selon le support, un système distribué ne peut pas satisfaire simultanément les trois garanties dans le sens fort du théorème CAP ; il faut donc faire un compromis.</div>
+
+<h3>MongoDB : Replica Set</h3>
+<p>Un <span class="term">Replica Set</span> est un ensemble de serveurs MongoDB partageant des répliques du même ensemble de documents.</p>
+<ul>
+<li><strong>Primary :</strong> un seul dans un replica set ; les écritures ont lieu sur lui.</li>
+<li><strong>Secondaries :</strong> récupèrent l'opLog et maintiennent une copie locale.</li>
+<li><strong>Arbiter :</strong> peut éventuellement participer à certaines fonctions d'élection.</li>
+</ul>
+
+<h3>opLog</h3>
+<p>Le <code>opLog</code> est le journal des opérations de modification. Le Primary enregistre les modifications et les Secondaries récupèrent ce journal pour mettre à jour leur copie.</p>
+
+<h3>MongoDB et niveaux de cohérence</h3>
+<table>
+<tr><th>Cohérence forte</th><th>Cohérence à terme</th></tr>
+<tr><td>Le client lit toujours via le Primary.</td><td>Le client peut lire un Secondary.</td></tr>
+<tr><td>Les Secondaries ne servent pas à distribuer les lectures.</td><td>Permet de répartir certaines lectures.</td></tr>
+<tr><td>Les Secondaries servent principalement de réplication/secours.</td><td>Choix possibles selon la latence ou le secondaire préféré.</td></tr>
+</table>
+
+<div class="key good"><strong>Phrase DS :</strong> « La réplication améliore la tolérance aux pannes et peut distribuer les lectures, mais le partitionnement est le mécanisme privilégié pour augmenter la capacité à grande échelle. »</div>
+</section>
+
+<section id="sharding">
+<h2>10 — Sharding : partitionner pour passer à l'échelle</h2>
+
+<h3>Pourquoi partitionner ?</h3>
+<p>Le Big Data nécessite des capacités de stockage, CPU et RAM très importantes. Deux approches existent :</p>
+
+<table>
+<tr><th>Scalabilité verticale</th><th>Scalabilité horizontale</th></tr>
+<tr><td>Augmenter la puissance d'une seule machine.</td><td>Ajouter de nouvelles machines.</td></tr>
+<tr><td>Limite physique et économique.</td><td>Les données/calculs sont répartis sur un cluster.</td></tr>
+<tr><td>Une machine très puissante peut coûter disproportionnellement cher.</td><td>Augmente le débit et réduit la charge de chaque serveur.</td></tr>
+</table>
+
+<div class="key good"><strong>Sharding = partitionnement horizontal des données.</strong> On découpe une grande collection en fragments distribués sur plusieurs serveurs.</div>
+
+<h3>Comment fonctionne le sharding ?</h3>
+<ol>
+<li><strong>Découper</strong> une grande collection en fragments appelés <strong>chunks</strong>.</li>
+<li>Le découpage se fait selon une <strong>shard key</strong> / clé de partitionnement.</li>
+<li><strong>Distribuer</strong> les chunks sur différents serveurs appelés <strong>shards</strong>.</li>
+<li><strong>Maintenir un répertoire</strong> indiquant quel chunk se trouve sur quel shard.</li>
+<li>Un <strong>routeur</strong> consulte ce répertoire et envoie la requête au bon shard.</li>
+</ol>
+
+<div class="flow">
+<span>Client</span><span class="arrow">→</span><span>Routeur</span><span class="arrow">→</span><span>Répertoire</span><span class="arrow">→</span><span>Shard</span>
+</div>
+
+<h3>Chunk</h3>
+<p>Un <span class="term">chunk</span> est un fragment de données. Le support indique qu'il possède généralement une taille maximale prédéfinie, de l'ordre de dizaines de Mo à quelques Go selon le système. On retrouve des termes similaires dans d'autres systèmes : tablet, region, bucket, etc.</p>
+
+<h3>Structure d'un système partitionné</h3>
+<p>Le routeur n'a pas besoin de connaître chaque document individuellement : il utilise une structure de routage qui associe les fragments aux serveurs.</p>
+
+<div class="key"><strong>Pourquoi ne pas envoyer directement chaque requête à tous les serveurs ?</strong> Parce que cela provoquerait du travail inutile. Le routeur cherche à identifier le shard pertinent.</div>
+
+<h3>Équilibrage et élasticité</h3>
+<p>Un bon système de sharding doit assurer :</p>
+<ul>
+<li><strong>Load balancing :</strong> répartir équitablement la charge.</li>
+<li><strong>Élasticité :</strong> s'adapter à l'ajout/suppression de données et à l'ajout/disparition de serveurs.</li>
+</ul>
+
+<h3>Split et migration</h3>
+<table>
+<tr><th>Opération</th><th>Rôle</th></tr>
+<tr><td><strong>Split</strong></td><td>Diviser un chunk devenu trop gros.</td></tr>
+<tr><td><strong>Migration</strong></td><td>Déplacer un chunk d'un shard vers un autre pour équilibrer la charge.</td></tr>
+</table>
+
+<p>Le support précise que le split est relativement peu coûteux alors que la migration est coûteuse, car elle implique le déplacement des données. Le système effectue donc généralement une migration à la fois.</p>
+
+<h3>Tolérance aux pannes dans un système partitionné</h3>
+<ul>
+<li>Le répertoire de routage est critique : s'il constitue un <strong>SPOF</strong>, sa panne peut bloquer le système.</li>
+<li>Le répertoire doit donc être répliqué.</li>
+<li>Les fragments doivent eux aussi être répliqués.</li>
+</ul>
+</section>
+
+<section id="mongo-shard">
+<h2>11 — Le sharding de MongoDB — jusqu'à la diapositive 69</h2>
+
+<h3>Architecture MongoDB sharded</h3>
+<div class="grid">
+<div class="card">
+<h4>Config Server</h4>
+<p>Stocke le répertoire / les métadonnées permettant de savoir où se trouvent les chunks.</p>
+<p>Le support insiste sur le fait qu'il doit être répliqué.</p>
+</div>
+<div class="card">
+<h4>mongos — Query Router</h4>
+<p>Reçoit les requêtes des clients, consulte les informations du Config Server, oriente les requêtes vers le ou les shards appropriés, agrège les résultats puis les renvoie au client.</p>
+<p><strong>Stateless :</strong> il ne stocke pas les données.</p>
+</div>
+<div class="card">
+<h4>Shard</h4>
+<p>Serveur de données contenant une partie des données. Dans l'architecture présentée, chaque shard est un Replica Set complet.</p>
+</div>
+<div class="card">
+<h4>Balancer</h4>
+<p>Processus d'arrière-plan chargé de contribuer à la répartition de la charge, notamment via la migration de chunks.</p>
+</div>
+</div>
+
+<h3>Schéma mental à mémoriser</h3>
+<div class="flow">
+<span>Client</span><span class="arrow">→</span>
+<span>mongos</span><span class="arrow">→</span>
+<span>Config Server</span><span class="arrow">→</span>
+<span>Shard approprié</span>
+</div>
+
+<p>Le <code>mongos</code> est le point d'entrée côté client. Le Config Server fournit les métadonnées de routage. Les shards stockent réellement les données.</p>
+
+<h3>Pourquoi plusieurs mongos ?</h3>
+<p>Le support précise qu'il peut y avoir plusieurs routeurs. Ils sont stateless. Un client envoie sa requête à un routeur, qui se charge du routage.</p>
+
+<h3>Ajouter des shards</h3>
+<p>La diapositive 69 présente un petit test de configuration.</p>
+
+<pre># Config Server
+mkdir /data/configdb
+mongod --configsvr --dbpath /data/configdb --port 27019
+
+# Si le Config Server est répliqué
+mongod --configsvr --replSet nomRS --dbpath &lt;path&gt;
+
+# Routeur
+mongos --configdb localhost:27019
+
+# Avec Config Server répliqué
+mongos --configdb nomRS/confServer1:port1,confServer2:port2,confServer3:port3
+
+# Deux serveurs de données pour le test
+mongod --dbpath /data/node1 --port=30001
+mongod --dbpath /data/node2 --port=30002
+
+# Depuis mongos
+sh.addShard("localhost:30001")
+sh.addShard("localhost:30002")
+sh.enableSharding("dbtp")</pre>
+
+<div class="key warn"><strong>Attention DS :</strong> le support précise que, pour la production, il faudrait des Replica Sets complets pour les shards ; le test de la diapositive utilise une configuration simplifiée.</div>
+
+<h3>Fin exacte du périmètre</h3>
+<p><strong>La diapositive 69 est la dernière diapositive à réviser.</strong> Elle termine la première partie pratique du sharding MongoDB avec le lancement du Config Server, du routeur, de deux serveurs, l'ajout des shards et l'activation du sharding de la base.</p>
+
+<div class="key danger"><strong>Ne pas réviser au-delà pour ce DS</strong> : le support passe ensuite à d'autres développements du partitionnement distribué / hachage et à Cassandra, mais ces parties sont hors du périmètre demandé.</div>
+</section>
+
+<section id="exam">
+<h2>12 — Révision DS : ce qu'il faut savoir faire sans regarder le cours</h2>
+
+<h3>Bloc A — Définitions</h3>
+<ol>
+<li>Définir Big Data.</li>
+<li>Définir NoSQL et expliquer « Not Only SQL ».</li>
+<li>Citer les quatre grandes familles NoSQL vues dans le cours.</li>
+<li>Définir une transaction.</li>
+<li>Expliquer ACID.</li>
+<li>Définir transaction distribuée.</li>
+<li>Expliquer 2PC.</li>
+<li>Définir modèle orienté document.</li>
+<li>Définir réplication.</li>
+<li>Différencier réplication synchrone et asynchrone.</li>
+<li>Définir cohérence forte et cohérence à terme.</li>
+<li>Expliquer CAP.</li>
+<li>Définir Replica Set, Primary, Secondary et opLog.</li>
+<li>Définir sharding, chunk, shard key, shard, routeur et Config Server.</li>
+</ol>
+
+<h3>Bloc B — Comparaisons classiques</h3>
+<table>
+<tr><th>Question</th><th>Réponse courte attendue</th></tr>
+<tr><td>Vertical vs horizontal</td><td>Vertical = machine plus puissante ; horizontal = ajout de machines.</td></tr>
+<tr><td>Relationnel vs document</td><td>Tables + jointures vs documents autonomes et imbriqués.</td></tr>
+<tr><td>Synchrone vs asynchrone</td><td>Attendre les copies vs ne pas attendre toutes les copies.</td></tr>
+<tr><td>Cohérence forte vs eventual</td><td>Visible immédiatement vs incohérences temporaires acceptées.</td></tr>
+<tr><td>Réplication vs sharding</td><td>Réplication = copies ; sharding = découpage des données.</td></tr>
+<tr><td>Primary vs Secondary</td><td>Primary reçoit les écritures ; Secondary réplique via l'opLog.</td></tr>
+<tr><td>Split vs migration</td><td>Split = diviser un chunk ; migration = déplacer un chunk.</td></tr>
+<tr><td>mongos vs Config Server</td><td>mongos route les requêtes ; Config Server stocke les métadonnées de routage.</td></tr>
+</table>
+
+<h3>Bloc C — Commandes MongoDB à mémoriser</h3>
+<pre>use maBase
+show collections
+db.createCollection("movies")
+
+db.movies.insertOne({...})
+db.movies.find()
+db.movies.findOne({...})
+db.movies.count()
+db.movies.drop()
+
+db.movies.find({champ: valeur})
+db.movies.find({champ: {$gte: 10, $lte: 20}})
+db.movies.find({champ: {$in: [a,b,c]}})
+db.movies.find({champ: {$exists: true}})
+
+db.movies.find({...}).skip(0).limit(2)
+
+db.movies.aggregate([
+  {$match: {...}},
+  {$group: {_id: "$champ", total: {$sum: 1}}},
+  {$sort: {total: -1}},
+  {$limit: 3}
+])
+
+sh.addShard("localhost:30001")
+sh.addShard("localhost:30002")
+sh.enableSharding("dbtp")</pre>
+
+<h3>Bloc D — Questions pièges avec réponses</h3>
+
+<details><summary>Pourquoi le NoSQL réduit-il l'utilisation des jointures ?</summary>
+<p>Parce que le modèle documentaire regroupe les données liées dans des documents autonomes. On récupère donc une grande partie des informations dans un même document au lieu de reconstruire l'entité à partir de plusieurs tables.</p>
+</details>
+
+<details><summary>Pourquoi la scalabilité verticale a-t-elle des limites ?</summary>
+<p>Les ressources d'une seule machine ne peuvent pas augmenter indéfiniment et les machines très performantes sont coûteuses. Le cloud fournit également souvent des instances de taille limitée.</p>
+</details>
+
+<details><summary>Pourquoi la réplication asynchrone est-elle plus rapide ?</summary>
+<p>Parce que le serveur qui reçoit l'écriture n'attend pas la confirmation de toutes les copies avant de répondre au client. En contrepartie, une copie secondaire peut temporairement être en retard.</p>
+</details>
+
+<details><summary>Pourquoi faut-il une majorité lors d'une élection ?</summary>
+<p>Pour éviter qu'une partition réseau permette à plusieurs groupes de considérer chacun qu'il est autorisé à élire son propre maître. La majorité permet de maintenir une décision unique.</p>
+</details>
+
+<details><summary>Pourquoi choisir soigneusement la shard key ?</summary>
+<p>Parce qu'elle détermine comment les documents sont répartis et influence directement les performances, la distribution de charge et le routage des requêtes.</p>
+</details>
+
+<details><summary>Quel est le rôle du mongos ?</summary>
+<p>Recevoir la requête, consulter les métadonnées nécessaires au routage, envoyer la requête au shard approprié, éventuellement récupérer plusieurs résultats, les agréger puis répondre au client.</p>
+</details>
+
+<details><summary>Quel est le rôle du Config Server ?</summary>
+<p>Stocker les métadonnées / le répertoire indiquant où se trouvent les chunks et donc permettre au routeur de savoir où envoyer les requêtes.</p>
+</details>
+
+<details><summary>Pourquoi les chunks sont-ils importants ?</summary>
+<p>Ils constituent les unités de découpage et de déplacement des données dans le système partitionné. Ils peuvent être splittés lorsqu'ils deviennent trop gros et migrés pour équilibrer la charge.</p>
+</details>
+
+<h3>Mini-plan de mémorisation avant le DS</h3>
+<div class="grid">
+<div class="card"><strong>1.</strong> Apprendre les définitions : NoSQL, document, transaction, réplication, sharding.</div>
+<div class="card"><strong>2.</strong> Maîtriser ACID + 2PC + CAP.</div>
+<div class="card"><strong>3.</strong> Savoir expliquer Primary/Secondary/opLog/Replica Set.</div>
+<div class="card"><strong>4.</strong> Savoir expliquer le chemin Client → mongos → Config Server → Shard.</div>
+<div class="card"><strong>5.</strong> Réviser les commandes <code>find</code>, opérateurs, <code>aggregate</code> et commandes de sharding.</div>
+<div class="card"><strong>6.</strong> Faire les comparaisons : réplication vs sharding, vertical vs horizontal, synchrone vs asynchrone.</div>
+</div>
+
+<div class="key good">
+<strong>La logique globale du cours :</strong><br>
+Big Data → une machine ne suffit plus → distribution → les transactions et jointures deviennent difficiles à grande échelle → NoSQL propose des modèles plus adaptés → MongoDB utilise des documents → la réplication améliore disponibilité/tolérance aux pannes → le sharding répartit les données pour passer à l'échelle → MongoDB combine Config Server + mongos + shards.
+</div>
+</section>
+
+<footer>
+<p><strong>Source :</strong> support de cours fourni par l'étudiant, « Bases de données NoSQL — Étude de cas avec MongoDB ». Cette fiche couvre le périmètre demandé, jusqu'à la diapositive 69 incluse.</p>
+<p class="small">Astuce : utilise Ctrl+F ou la barre de recherche en haut pour retrouver rapidement « ACID », « CAP », « opLog », « shard key », « mongos », etc.</p>
+</footer>
+</div>
+
+<script>
+const input=document.getElementById('search');
+input.addEventListener('input',()=>{
+  const q=input.value.trim().toLowerCase();
+  document.querySelectorAll('section .card, section .key, section details, section table, section h3, section p, section li').forEach(el=>{
+    if(!q){el.style.display=''; return;}
+    el.style.display=el.textContent.toLowerCase().includes(q)?'':'none';
+  });
+});
+</script>
+</body>
+</html>
